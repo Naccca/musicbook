@@ -4,6 +4,7 @@
     [musicbook.layout :refer [error-page]]
     [musicbook.routes.home :refer [home-routes]]
     [musicbook.routes.artists :refer [artists-routes]]
+    [musicbook.routes.bands :refer [bands-routes]]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.webjars :refer [wrap-webjars]]
@@ -18,7 +19,8 @@
   (into [] (concat "" {:middleware [middleware/wrap-csrf
                                     middleware/wrap-formats]}
                    (home-routes)
-                   (artists-routes))))
+                   (artists-routes)
+                   (bands-routes))))
 
 (mount/defstate app-routes
   :start
