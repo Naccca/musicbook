@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+ <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-image">
+          <img src="img/warning_clojure.png">
+          <span class="card-title">{{artist.name}}</span>
+          <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+        </div>
+        <div class="card-content">
+          <p>Location: {{artist.location}}</p>
+          <p>Byography: {{artist.bio}}</p>
+          <p>Created at: {{artist.created_at}}</p>
+          <p>Updated at: {{artist.updated_at}}</p>
+          <a href="/artists/edit/{{artist.id}}" class="waves-effect waves-light btn-small">Update</a>
+          <form method="POST" action="/artists/delete/{{artist.id}}">
+            <input type="submit" class="button is-primary" value="Delete"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

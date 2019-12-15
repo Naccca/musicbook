@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+  <div class="columns">
+    <div class="column">
+      <form method="POST" action="/artists">
+        {% csrf-field %}
+        <p>
+          Name:
+          <input class="input" type="text" name="name" value="{{name}}" />
+        </p>
+        {% if errors.name %}
+        <div class="notification is-danger">{{errors.name|join}}</div>
+        {% endif %}
+        <p>
+          Location:
+          <input class="input" type="text" name="location" value="{{location}}" />
+        </p>
+        {% if errors.location %}
+        <div class="notification is-danger">{{errors.location|join}}</div>
+        {% endif %}
+        <p>
+          Biography:
+          <textarea class="textarea" name="bio">{{bio}}</textarea>
+        </p>
+        {% if errors.bio %}
+        <div class="notification is-danger">{{errors.bio|join}}</div>
+        {% endif %}
+        <input type="submit" class="button is-primary" value="comment" />
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
