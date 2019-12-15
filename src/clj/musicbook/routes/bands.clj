@@ -20,6 +20,10 @@
     st/required
     st/string]])
 
+(def membership-schema
+  [[:artist_id
+    st/required]])
+
 (defn validate-band [params]
   (first (st/validate params band-schema)))
 
@@ -29,11 +33,11 @@
    "bands/index.html"
    {:bands (db/get-bands) :info (:info flash)}))
 
-(defn show-page [{:keys [path-params] :as request}]
+(defn show-page [{:keys [path-params flash] :as request}]
   (layout/render
    request
    "bands/show.html"
-   {:band (db/get-band path-params)}))
+   {:band (db/get-band path-params) :artists (db/get-artists-by-band-id path-params) :info (:info flash)}))
 
 (defn new-page [{:keys [flash] :as request}]
   (layout/render
@@ -71,10 +75,33 @@
     (db/delete-band! path-params)
     (assoc(response/found "/bands") :flash {:info "band deleted!"})))
 
+(defn create-membership! [{:keys [path-params params]}]
+  (if (and 
+        (st/valid? params membership-schema)
+        (db/artist? {:id (:artist_id params)})
+        (not (db/membership? (assoc params :band_id (:id path-params)))))
+    (do
+      (db/create-membership! 
+        (assoc params :band_id (:id path-params) :created_at (java.util.Date.) :updated_at (java.util.Date.)))
+      (response/found (str "/bands/show/" (:id path-params))))
+    (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Something went wrong!"})))
+
+(defn delete-membership! [{:keys [path-params params]}]
+  (if (st/valid? params membership-schema)
+    (do 
+      (db/delete-membership!
+        (assoc params :band_id (:id path-params)))
+      (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Artist removed."}))
+    (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Something went wrong!"})))
+
+  
+
 (defn bands-routes []
   [["/bands" {:get index-page :post create-band!}]
    ["/bands/show/:id" {:get show-page}]
    ["/bands/new" {:get new-page}]
    ["/bands/edit/:id" {:get edit-page}]
    ["/bands/update/:id" {:post update-band!}]
-   ["/bands/delete/:id" {:post delete-band!}]])
+   ["/bands/delete/:id" {:post delete-band!}]
+   ["/bands/create-membership/:id" {:post create-membership!}]
+   ["/bands/delete-membership/:id" {:post delete-membership!}]])

@@ -20,6 +20,8 @@ WHERE id = :id
 DELETE FROM users
 WHERE id = :id
 
+----------------------------------
+
 -- :name get-artists :? :*
 -- :doc selects all artists
 SELECT * FROM artists
@@ -27,6 +29,11 @@ SELECT * FROM artists
 -- :name get-artist :? :1
 --doc retrieves an artist record given the id
 SELECT * FROM artists
+WHERE id = :id
+
+-- :name artist? :? :1
+-- :doc returns true if artist exists
+SELECT true FROM artists
 WHERE id = :id
 
 -- :name create-artist! :! :n
@@ -45,6 +52,8 @@ WHERE id = :id
 -- :doc deletes an artist record given the id
 DELETE FROM artists
 WHERE id = :id 
+
+------------------------
 
 -- :name get-bands :? :*
 -- :doc selects all bands
@@ -71,3 +80,38 @@ WHERE id = :id
 -- :doc deletes an band record given the id
 DELETE FROM bands
 WHERE id = :id 
+
+---------------------------
+
+-- :name get-artists-by-band-id :? :*
+-- :doc selects all artists that are members of the band
+SELECT * FROM artists, memberships
+WHERE artists.id = memberships.artist_id AND memberships.band_id = :id
+
+-- :name membership? :? :1
+-- :doc returns true if membership exists
+SELECT true FROM memberships
+WHERE band_id = :band_id AND artist_id = :artist_id
+
+-- :name create-membership! :! :n
+-- :doc creates a new membership record
+INSERT INTO memberships
+(band_id, artist_id, created_at, updated_at)
+VALUES (:band_id, :artist_id, :created_at, :updated_at)
+
+-- :name delete-membership! :! :n
+-- :doc deletes membership
+DELETE FROM memberships
+WHERE band_id = :band_id AND artist_id = :artist_id 
+
+
+
+
+
+
+
+
+
+
+
+
