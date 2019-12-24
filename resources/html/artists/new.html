@@ -1,34 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content">
-  <div class="columns">
-    <div class="column">
-      <form method="POST" action="/artists">
-        {% csrf-field %}
-        <p>
-          Name:
-          <input class="input" type="text" name="name" value="{{name}}" />
-        </p>
-        {% if errors.name %}
-        <div class="notification is-danger">{{errors.name|join}}</div>
-        {% endif %}
-        <p>
-          Location:
-          <input class="input" type="text" name="location" value="{{location}}" />
-        </p>
-        {% if errors.location %}
-        <div class="notification is-danger">{{errors.location|join}}</div>
-        {% endif %}
-        <p>
-          Biography:
-          <textarea class="textarea" name="bio">{{bio}}</textarea>
-        </p>
-        {% if errors.bio %}
-        <div class="notification is-danger">{{errors.bio|join}}</div>
-        {% endif %}
-        <input type="submit" class="button is-primary" value="comment" />
-      </form>
+<section class="section">
+  <div class="container has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-5 is-4-desktop">
+        <form method="POST" action="/artists">
+          {% csrf-field %}
+            <div class="field">
+              <div class="control">
+                Username:
+                  <input class="input" type="text" placeholder= "Username" name="username" value="{{username}}" />
+              </div>
+            </div>
+            {% if errors.username %}
+              <div class="notification is-danger">{{errors.username|join}}</div>
+            {% endif %}
+            <div class="field">
+              <div class="control">
+                Password:
+                  <input class="input" type="password" placeholder="Password" name="password" value="{{password}}" />
+              </div>
+            </div>
+            {% if errors.password %}
+              <div class="notification is-danger">{{errors.password|join}}</div>
+            {% endif %}
+            <div class="field">
+              <div class="control">
+                Name:
+                  <input class="input" type="text" placeholder="Name" name="name" value="{{name}}"/>
+              </div>
+            </div>
+            {% if errors.name %}
+              <div class="notification is-danger">{{errors.name|join}}</div>
+            {% endif %}
+            <div class="field">
+              <div class="control">
+                Location:
+                  <input class="input" type="text" placeholder= "Location" name="location" value="{{location}}" />
+              </div>
+            </div>
+            {% if errors.location %}
+              <div class="notification is-danger">{{errors.location|join}}</div>
+            {% endif %}
+            <div class="field">
+              <div class="control">
+                Biography:
+                  <textarea class="textarea" placeholder="Biography" name="bio">{{bio}}</textarea>
+              </div>
+            </div>
+            {% if errors.bio %}
+              <div class="notification is-danger">{{errors.bio|join}}</div>
+            {% endif %}
+            <input class="button is-dark"  type="submit" value="submit" />
+        </form>
+      </div>
     </div>
   </div>
-</div>
+</section>
 {% endblock %}

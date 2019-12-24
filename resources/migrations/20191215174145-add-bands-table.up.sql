@@ -4,4 +4,6 @@ CREATE TABLE bands
  bio VARCHAR,
  location VARCHAR(255),
  created_at TIMESTAMP,
- updated_at TIMESTAMP);
+ updated_at TIMESTAMP,
+ owner_id INT NOT NULL,
+ FOREIGN KEY (owner_id) REFERENCES artists (id) ON DELETE CASCADE ON UPDATE CASCADE);

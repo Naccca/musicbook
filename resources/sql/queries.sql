@@ -39,8 +39,8 @@ WHERE id = :id
 -- :name create-artist! :! :n
 -- :doc creates a new artist record
 INSERT INTO artists
-(name, bio, location, created_at, updated_at)
-VALUES (:name, :bio, :location, :created_at, :updated_at)
+(username, password_hash, name, bio, location, created_at, updated_at)
+VALUES (:username, :password_hash, :name, :bio, :location, :created_at, :updated_at)
 
 -- :name update-artist! :! :n
 -- :doc updates an existing artist record

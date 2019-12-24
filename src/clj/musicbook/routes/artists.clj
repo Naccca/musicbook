@@ -5,7 +5,8 @@
    [clojure.java.io :as io]
    [ring.util.response]
    [ring.util.http-response :as response]
-   [struct.core :as st]))
+   [struct.core :as st]
+   [buddy.hashers :as hashers]))
 
 (def artist-schema
   [[:name
@@ -17,6 +18,14 @@
     st/string]
 
    [:location
+    st/required
+    st/string]
+
+   [:username
+    st/required
+    st/string]
+
+   [:password
     st/required
     st/string]])
 
@@ -39,7 +48,7 @@
   (layout/render
    request
    "artists/new.html"
-   (select-keys flash [:name :bio :location :errors])))
+   (select-keys flash [:username :name :bio :location :errors])))
 
 (defn edit-page [{:keys [flash path-params] :as request}]
   (layout/render
@@ -54,7 +63,11 @@
         (assoc :flash (assoc params :errors errors)))
     (do
       (db/create-artist!
-       (assoc params :created_at (java.util.Date.) :updated_at (java.util.Date.)))
+       (assoc
+        (dissoc params :password)
+        :password_hash (hashers/encrypt (:password params))
+        :created_at (java.util.Date.)
+        :updated_at (java.util.Date.)))
       (response/found "/artists"))))
 
 (defn update-artist! [{:keys [path-params params]}]
