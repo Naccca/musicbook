@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
- <div class="row">
+ <div class="container is-widescreen">
     <div class="col s12 m6">
       <div class="card">
         <div class="card-image">
@@ -15,10 +15,19 @@
           <p>Byography: {{artist.bio}}</p>
           <p>Created at: {{artist.created_at}}</p>
           <p>Updated at: {{artist.updated_at}}</p>
-          <a href="/artists/edit/{{artist.id}}" class="waves-effect waves-light btn-small">Update</a>
-          <form method="POST" action="/artists/delete/{{artist.id}}">
-            <input type="submit" class="button is-primary" value="Delete"/>
-          </form>
+          {% ifequal identity.id artist.id %}
+          <div class="field is-grouped">
+            <p class="control">
+              <a href="/artists/edit/{{artist.id}}" class="button is-info">Update</a>
+            </p>
+            <p class="control">
+              <form method="POST" action="/artists/delete/{{artist.id}}">
+                {% csrf-field %}
+                <input class="button is-danger" type="submit" value="Delete"/>
+              </form>
+            </p>
+          </div>
+          {% endifequal %}
         </div>
       </div>
     </div>

@@ -27,9 +27,19 @@ WHERE id = :id
 SELECT * FROM artists
 
 -- :name get-artist :? :1
---doc retrieves an artist record given the id
+-- doc retrieves an artist record given the id
 SELECT * FROM artists
 WHERE id = :id
+
+-- :name get-artist-by-username :? :1
+-- doc retrieve an artist record given the username
+SELECT * FROM artists
+WHERE username = :username
+
+-- :name get-artist-by-name :? :1
+-- doc retrieve an artist record given the name
+SELECT * FROM artists
+WHERE name = :name
 
 -- :name artist? :? :1
 -- :doc returns true if artist exists
@@ -67,8 +77,8 @@ WHERE id = :id
 -- :name create-band! :! :n
 -- :doc creates a new band record
 INSERT INTO bands
-(name, bio, location, created_at, updated_at)
-VALUES (:name, :bio, :location, :created_at, :updated_at)
+(name, bio, location, owner_id, created_at, updated_at)
+VALUES (:name, :bio, :location, :owner_id, :created_at, :updated_at)
 
 -- :name update-band! :! :n
 -- :doc updates an existing band record
@@ -99,12 +109,16 @@ INSERT INTO memberships
 (band_id, artist_id, created_at, updated_at)
 VALUES (:band_id, :artist_id, :created_at, :updated_at)
 
+-- :name accept-membership! :! :n
+-- :doc accepts membership
+UPDATE memberships
+SET state_id = 2
+WHERE artist_id = :artist_id AND band_id = :band_id
+
 -- :name delete-membership! :! :n
 -- :doc deletes membership
 DELETE FROM memberships
 WHERE band_id = :band_id AND artist_id = :artist_id 
-
-
 
 
 

@@ -9,8 +9,7 @@
       <ul class="artists">
         {% for item in artists %}
         <li>
-          <p>{{item.name}}</p>
-          <p><a href="artists/show/{{item.id}}">{{item.id}}</a></p>
+          <p><a href="artists/show/{{item.id}}">{{item.name}}</a></p>
         </li>
         {% endfor %}
       </ul>

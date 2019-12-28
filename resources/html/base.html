@@ -13,15 +13,15 @@
   </head>
   <body>
       <!-- navbar -->
-      <nav class="navbar is-info">
-          <div class="container">
+      <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+          <div class="container is-widescreen">
               <div class="navbar-brand">
                   <a class="navbar-item" href="/" style="font-weight:bold;">musicbook</a>
-                  <span class="navbar-burger burger" data-target="nav-menu">
+                  <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="nav-menu">
                       <span></span>
                       <span></span>
                       <span></span>
-                  </span>
+                  </a>
               </div>
               <div id="nav-menu" class="navbar-menu">
                   <div class="navbar-start">
@@ -30,7 +30,25 @@
                       <a href="/artists" class="navbar-item{% ifequal page "artists.html" %} is-active{%endifequal%}">Artists</a>
                       <a href="/bands" class="navbar-item{% ifequal page "bands.html" %} is-active{%endifequal%}">Bands</a>
                   </div>
-              </div>
+                  <div class="navbar-end">
+                    <div class="navbar-item">
+                      <div class="field is-grouped">
+                        {% ifequal identity nil %}
+                        <p class="control">
+                          <a href="/login" class="button is-info">Login</a>
+                        </p>
+                        {% else %}
+                        <p class="control">
+                          <form method="POST" action="/logout">
+                            {% csrf-field %}
+                            <input class="button is-info is-inverted" type="submit" value="Logout"/>
+                          </form>
+                        </p>
+                        {% endifequal %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
           </div>
       </nav>
 

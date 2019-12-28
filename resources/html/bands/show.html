@@ -14,26 +14,49 @@
           <p>Byography: {{band.bio}}</p>
           <p>Created at: {{band.created_at}}</p>
           <p>Updated at: {{band.updated_at}}</p>
+          <p>Owner: <a href="/artists/show/{{owner.id}}">{{owner.name}}</a></p>
+          <hr />
+          <p>Members:</p>
           <ul class="artists">
             {% for item in artists %}
               <li>
-                <p>{{item.name}}</p>
-                <p><a href="/artists/show/{{item.id}}">{{item.id}}</a></p>
-                <form method="POST" action="/bands/delete-membership/{{band.id}}">
-                  <input class="input" type="text" name="artist_id" value="{{item.id}}" />
-                  <input type="submit" class="button is-primary" value="Delete"/>
-                </form>
+                <p>
+                  <a href="/artists/show/{{item.id}}">{{item.name}}</a>
+                  {% ifequal item.state_id 1 %}
+                    {% ifequal identity.id item.artist_id %}
+                      <form method="POST" action="/artists/accept-membership/{{identity.id}}">
+                        <input style="display: none" type="text" name="band_id" value="{{band.id}}" />
+                        <input type="submit" class="button is-primary" value="Accept"/>
+                      </form>
+                    {% else %}
+                      (invited)
+                    {% endifequal %}
+                  {% endifequal %}
+                  {% ifequal identity.id band.owner_id %}
+                    <form method="POST" action="/bands/delete-membership/{{band.id}}">
+                      <input style="display: none" type="text" name="artist_id" value="{{item.id}}" />
+                      <input type="submit" class="button is-primary" value="Delete"/>
+                    </form>
+                  {% endifequal %}
+                </p>
               </li>
             {% endfor %}
           </ul>
-          <form method="POST" action="/bands/create-membership/{{band.id}}">
-            <input class="input" type="text" name="artist_id" value="" />
-            <input type="submit" class="button is-primary" value="Submit"/>
-          </form>
-          <a href="/bands/edit/{{band.id}}" class="waves-effect waves-light btn-small">Update</a>
-          <form method="POST" action="/bands/delete/{{band.id}}">
-            <input type="submit" class="button is-primary" value="Delete"/>
-          </form>
+          {% ifequal identity.id band.owner_id %}
+            <hr />
+            <p>Add new member</p>
+            <form method="POST" action="/bands/create-membership/{{band.id}}">
+              {% csrf-field %}
+              <input class="input" type="text" name="artist_name" value="" />
+              <input type="submit" class="button is-primary" value="Submit"/>
+            </form>
+            <hr />
+            <a href="/bands/edit/{{band.id}}" class="waves-effect waves-light btn-small">Update</a>
+            <form method="POST" action="/bands/delete/{{band.id}}">
+              {% csrf-field %}
+              <input type="submit" class="button is-primary" value="Delete"/>
+            </form>
+          {% endifequal %}
         </div>
       </div>
     </div>

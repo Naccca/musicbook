@@ -20,12 +20,19 @@
     st/required
     st/string]])
 
-(def membership-schema
+(def create-membership-schema
+  [[:artist_name
+    st/required]])
+
+(def delete-membership-schema
   [[:artist_id
     st/required]])
 
 (defn validate-band [params]
   (first (st/validate params band-schema)))
+
+(defn owner? [band session]
+  (= (get-in session [:identity :id]) (:owner_id band)))
 
 (defn index-page [{:keys [flash] :as request}]
   (layout/render
@@ -34,10 +41,14 @@
    {:bands (db/get-bands) :info (:info flash)}))
 
 (defn show-page [{:keys [path-params flash] :as request}]
-  (layout/render
-   request
-   "bands/show.html"
-   {:band (db/get-band path-params) :artists (db/get-artists-by-band-id path-params) :info (:info flash)}))
+  (let [band (db/get-band path-params)]
+    (layout/render
+     request
+     "bands/show.html"
+     {:band band
+      :owner (db/get-artist {:id (:owner_id band)})
+      :artists (db/get-artists-by-band-id path-params)
+      :info (:info flash)})))
 
 (defn new-page [{:keys [flash] :as request}]
   (layout/render
@@ -45,54 +56,72 @@
    "bands/new.html"
    (select-keys flash [:name :bio :location :errors])))
 
-(defn edit-page [{:keys [flash path-params] :as request}]
-  (layout/render
-   request
-   "bands/edit.html"
-   (merge {:band (db/get-band path-params)} (select-keys flash [:errors]))))
+(defn edit-page [{:keys [flash path-params session] :as request}]
+  (let [band (db/get-band path-params)]
+    (if (owner? band session)
+      (layout/render
+       request
+       "bands/edit.html"
+       (merge {:band band} (select-keys flash [:errors])))
+      (response/found "/"))))
 
-
-(defn create-band! [{:keys [params]}]
+(defn create-band! [{:keys [params session]}]
   (if-let [errors (validate-band params)]
     (-> (response/found "/bands/new")
         (assoc :flash (assoc params :errors errors)))
     (do
       (db/create-band!
-       (assoc params :created_at (java.util.Date.) :updated_at (java.util.Date.)))
+       (assoc params 
+              :owner_id (get-in session [:identity :id])
+              :created_at (java.util.Date.)
+              :updated_at (java.util.Date.)))
       (response/found "/bands"))))
 
-(defn update-band! [{:keys [path-params params]}]
-  (if-let [errors (validate-band params)]
-    (-> (response/found (str "/bands/edit/" (:id path-params)))
-        (assoc :flash (assoc params :errors errors)))
-    (do
-      (db/update-band!
-       (assoc (merge params path-params) :updated_at (java.util.Date.)))
-      (response/found (str "/bands/show/" (:id path-params))))))
+(defn update-band! [{:keys [path-params params session]}]
+  (let [band (db/get-band path-params)]
+    (if (owner? band session)
+      (if-let [errors (validate-band params)]
+        (-> (response/found (str "/bands/edit/" (:id band)))
+            (assoc :flash (assoc params :errors errors)))
+        (do
+          (db/update-band!
+           (assoc (merge params path-params) :updated_at (java.util.Date.)))
+          (response/found (str "/bands/show/" (:id band)))))
+      (response/found "/"))))
 
-(defn delete-band! [{:keys [path-params]}]
-  (do
-    (db/delete-band! path-params)
-    (assoc(response/found "/bands") :flash {:info "band deleted!"})))
+(defn delete-band! [{:keys [path-params session]}]
+  (let [band (db/get-band path-params)]
+    (if (owner? band session)
+      (do
+        (db/delete-band! path-params)
+        (assoc(response/found "/bands") :flash {:info "band deleted!"}))
+      (response/found "/"))))
 
-(defn create-membership! [{:keys [path-params params]}]
-  (if (and 
-        (st/valid? params membership-schema)
-        (db/artist? {:id (:artist_id params)})
-        (not (db/membership? (assoc params :band_id (:id path-params)))))
-    (do
-      (db/create-membership! 
-        (assoc params :band_id (:id path-params) :created_at (java.util.Date.) :updated_at (java.util.Date.)))
-      (response/found (str "/bands/show/" (:id path-params))))
-    (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Something went wrong!"})))
+(defn create-membership! [{:keys [path-params params session]}]
+  (let [band (db/get-band path-params)]
+    (if (owner? band session)
+      (if-let [artist (db/get-artist-by-name {:name (:artist_name params)})]
+        (if (and 
+              (st/valid? params create-membership-schema)
+              (not (db/membership? {:artist_id (:id artist) :band_id (:id band)})))
+          (do
+            (db/create-membership! 
+              {:artist_id (:id artist) :band_id (:id band) :created_at (java.util.Date.) :updated_at (java.util.Date.)})
+            (response/found (str "/bands/show/" (:id band))))
+          (assoc(response/found (str "/bands/show/" (:id band))) :flash {:info "Something went wrong!"}))
+        (assoc(response/found (str "/bands/show/" (:id band))) :flash {:info "Artist not found!"}))
+      (response/found "/"))))
 
-(defn delete-membership! [{:keys [path-params params]}]
-  (if (st/valid? params membership-schema)
-    (do 
-      (db/delete-membership!
-        (assoc params :band_id (:id path-params)))
-      (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Artist removed."}))
-    (assoc(response/found (str "/bands/show/" (:id path-params))) :flash {:info "Something went wrong!"})))
+(defn delete-membership! [{:keys [path-params params session]}]
+  (let [band (db/get-band path-params)]
+    (if (owner? band session)
+      (if (st/valid? params delete-membership-schema)
+        (do 
+          (db/delete-membership!
+            (assoc params :band_id (:id band)))
+          (assoc(response/found (str "/bands/show/" (:id band))) :flash {:info "Artist removed."}))
+        (assoc(response/found (str "/bands/show/" (:id band))) :flash {:info "Something went wrong!"}))
+      (response/found "/"))))
 
   
 

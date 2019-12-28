@@ -5,6 +5,7 @@
     [musicbook.routes.home :refer [home-routes]]
     [musicbook.routes.artists :refer [artists-routes]]
     [musicbook.routes.bands :refer [bands-routes]]
+    [musicbook.routes.login :refer [login-routes]]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.webjars :refer [wrap-webjars]]
@@ -20,7 +21,8 @@
                                     middleware/wrap-formats]}
                    (home-routes)
                    (artists-routes)
-                   (bands-routes))))
+                   (bands-routes)
+                   (login-routes))))
 
 (mount/defstate app-routes
   :start
@@ -39,6 +41,7 @@
          (constantly (error-page {:status 405, :title "405 - Not allowed"}))
          :not-acceptable
          (constantly (error-page {:status 406, :title "406 - Not acceptable"}))}))))
+
 
 (defn app []
   (middleware/wrap-base #'app-routes))
