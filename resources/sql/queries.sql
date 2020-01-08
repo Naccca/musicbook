@@ -1,27 +1,3 @@
--- :name create-user! :! :n
--- :doc creates a new user record
-INSERT INTO users
-(id, first_name, last_name, email, pass)
-VALUES (:id, :first_name, :last_name, :email, :pass)
-
--- :name update-user! :! :n
--- :doc updates an existing user record
-UPDATE users
-SET first_name = :first_name, last_name = :last_name, email = :email
-WHERE id = :id
-
--- :name get-user :? :1
--- :doc retrieves a user record given the id
-SELECT * FROM users
-WHERE id = :id
-
--- :name delete-user! :! :n
--- :doc deletes a user record given the id
-DELETE FROM users
-WHERE id = :id
-
-----------------------------------
-
 -- :name get-artists :? :*
 -- :doc selects all artists
 SELECT * FROM artists
@@ -29,7 +5,7 @@ SELECT * FROM artists
 -- :name search-artists :? :*
 -- :doc search artists by name
 SELECT * FROM artists
-WHERE name LIKE :name-like
+WHERE upper(name) LIKE upper(:name-like)
 
 -- :name get-artist :? :1
 -- doc retrieves an artist record given the id
@@ -54,13 +30,13 @@ WHERE id = :id
 -- :name create-artist! :! :n
 -- :doc creates a new artist record
 INSERT INTO artists
-(username, password_hash, name, bio, location, created_at, updated_at)
-VALUES (:username, :password_hash, :name, :bio, :location, :created_at, :updated_at)
+(username, password_hash, name, bio, location, instruments, created_at, updated_at)
+VALUES (:username, :password_hash, :name, :bio, :location, :instruments, :created_at, :updated_at)
 
 -- :name update-artist! :! :n
 -- :doc updates an existing artist record
 UPDATE artists
-SET name = :name, bio = :bio, location = :location, updated_at = :updated_at
+SET name = :name, bio = :bio, location = :location, instruments = :instruments, updated_at = :updated_at
 WHERE id = :id
 
 -- :name delete-artist! :! :n
@@ -77,7 +53,7 @@ SELECT * FROM bands
 -- :name search-bands :? :*
 -- :doc search bands by name
 SELECT * FROM bands
-WHERE name LIKE :name-like
+WHERE upper(name) LIKE upper(:name-like)
 
 -- :name get-band :? :1
 --doc retrieves an band record given the id
@@ -87,13 +63,13 @@ WHERE id = :id
 -- :name create-band! :! :n
 -- :doc creates a new band record
 INSERT INTO bands
-(name, bio, location, owner_id, created_at, updated_at)
-VALUES (:name, :bio, :location, :owner_id, :created_at, :updated_at)
+(name, bio, location, genres, owner_id, created_at, updated_at)
+VALUES (:name, :bio, :location, :genres, :owner_id, :created_at, :updated_at)
 
 -- :name update-band! :! :n
 -- :doc updates an existing band record
 UPDATE bands
-SET name = :name, bio = :bio, location = :location, updated_at = :updated_at
+SET name = :name, bio = :bio, location = :location, genres = :genres, updated_at = :updated_at
 WHERE id = :id
 
 -- :name delete-band! :! :n

@@ -29,8 +29,10 @@
         <span class="icon">
           <i class="material-icons">music_note</i>
         </span>
-        <h4 class="title is-spaced is-5">Genres</h4>
-        <p class="subtitle is-6">Rock 'n roll</p>
+        <h4 class="title is-spaced is-5">Instruments</h4>
+        <ul class="comma-list">
+          {{artist.instruments}}
+        </ul>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
@@ -77,8 +79,12 @@
                 {% ifequal artist.id item.owner_id %}
                   <i class="material-icons" style="color: #fdd835">star</i>
                 {% endifequal %}
-                {{item.name}}
+                <a href="/bands/show/{{item.id}}">{{item.name}}</a>
               </h5>
+              <p class="subtitle is-6"></p>
+              <ul class="comma-list">
+                {{item.genres}}
+              </ul>
               {% ifequal identity.id artist.id %}
                 <form class="field" method="POST" action="/bands/delete-membership/{{item.id}}">
                   <input style="display: none" type="text" name="artist_id" value="{{artist.id}}" />
@@ -96,7 +102,9 @@
       <h2 class="title">Invites</h2>
       <br>
       {% for item in invites %}
-        <h5 class="title is-5">{{item.name}}</h5>
+        <h5 class="title is-5">
+          <a href="/bands/show/{{item.id}}">{{item.name}}</a>
+        </h5>
         <form method="POST" action="/artists/accept-membership/{{identity.id}}">
           <input style="display: none" type="text" name="band_id" value="{{item.id}}" />
           <input type="submit" class="button is-primary" value="Accept"/>

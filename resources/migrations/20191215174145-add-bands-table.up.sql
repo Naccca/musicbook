@@ -3,6 +3,7 @@ CREATE TABLE bands
  name VARCHAR(255) NOT NULL,
  bio VARCHAR,
  location VARCHAR(255),
+ genres VARCHAR(255),
  created_at TIMESTAMP,
  updated_at TIMESTAMP,
  owner_id INT NOT NULL,

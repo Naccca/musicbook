@@ -5,5 +5,6 @@ CREATE TABLE artists
  name VARCHAR(255) NOT NULL,
  bio VARCHAR,
  location VARCHAR(255),
+ instruments VARCHAR(255),
  created_at TIMESTAMP,
  updated_at TIMESTAMP);

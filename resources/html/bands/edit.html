@@ -20,6 +20,13 @@
         <div class="notification is-danger">{{errors.location|join}}</div>
         {% endif %}
         <p>
+        <p>
+          Genres:
+          <input class="input" type="text" name="genres" value="{{band.genres}}" />
+        </p>
+        {% if errors.genres %}
+        <div class="notification is-danger">{{errors.genres|join}}</div>
+        {% endif %}
           Biography:
           <textarea class="textarea" name="bio">{{band.bio}}</textarea>
         </p>

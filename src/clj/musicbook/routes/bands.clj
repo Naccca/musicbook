@@ -18,6 +18,10 @@
 
    [:location
     st/required
+    st/string]
+
+   [:genres
+    st/required
     st/string]])
 
 (def create-membership-schema
@@ -61,7 +65,7 @@
   (layout/render
    request
    "bands/new.html"
-   (select-keys flash [:name :bio :location :errors])))
+   (select-keys flash [:name :bio :location :genres :errors])))
 
 (defn edit-page [{:keys [flash path-params session] :as request}]
   (let [band (db/get-band path-params)]

@@ -21,6 +21,10 @@
     st/required
     st/string]
 
+   [:instruments
+    st/required
+    st/string]
+
    [:username
     st/required
     st/string]
@@ -77,7 +81,7 @@
   (layout/render
    request
    "artists/new.html"
-   (select-keys flash [:username :name :bio :location :errors])))
+   (select-keys flash [:username :name :bio :location :instruments :errors])))
 
 (defn edit-page [{:keys [flash path-params session] :as request}]
   (if (authorize? session path-params)

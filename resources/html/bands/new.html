@@ -20,6 +20,13 @@
         <div class="notification is-danger">{{errors.location|join}}</div>
         {% endif %}
         <p>
+          Genres:
+          <input class="input" type="text" name="genres" placeholder="Separated by a comma" value="{{genres}}" />
+        </p>
+        {% if errors.genres %}
+        <div class="notification is-danger">{{errors.genres|join}}</div>
+        {% endif %}
+        <p>
           Biography:
           <textarea class="textarea" name="bio">{{bio}}</textarea>
         </p>

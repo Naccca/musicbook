@@ -26,7 +26,10 @@
               <div id="nav-menu" class="navbar-menu">
                   <div class="navbar-start">
                       <a href="/" class="navbar-item{% ifequal page "home.html" %} is-active{%endifequal%}">Home</a>
-                      <a href="/about" class="navbar-item{% ifequal page "about.html" %} is-active{%endifequal%}">About</a>
+                      {% ifunequal identity nil %}
+                      <a href="/artists/show/{{identity.id}}" class="navbar-item{% ifequal page "show.html" %} is-active{%endifequal%}">My profile</a>
+                      <a href="/bands/new" class="navbar-item{% ifequal page "new.html" %} is-active{%endifequal%}">Create band</a>
+                      {% endifunequal %}
                       <a href="/artists" class="navbar-item{% ifequal page "artists.html" %} is-active{%endifequal%}">Artists</a>
                       <a href="/bands" class="navbar-item{% ifequal page "bands.html" %} is-active{%endifequal%}">Bands</a>
                   </div>
@@ -34,6 +37,9 @@
                     <div class="navbar-item">
                       <div class="field is-grouped">
                         {% ifequal identity nil %}
+                        <p class="control">
+                          <a href="/artists/new" class="button is-success">Sign up</a>
+                        </p>
                         <p class="control">
                           <a href="/login" class="button is-info">Login</a>
                         </p>
@@ -67,6 +73,12 @@
         burger.addEventListener('click', function(){
           burger.classList.toggle('is-active');
           nav.classList.toggle('is-active');
+        });
+
+        document.querySelectorAll('.comma-list').forEach(ul => {
+          var lis = ul.innerHTML.split(',');
+          var result = '<li>' + lis.join('</li><li>') + '</li>';
+          ul.innerHTML = result;
         });
       })();
     </script>

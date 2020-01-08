@@ -9,7 +9,7 @@
             <div class="field">
               <div class="control">
                 Username:
-                  <input class="input" type="text" placeholder= "Username" name="username" value="{{username}}" />
+                  <input class="input" type="text" name="username" value="{{username}}" />
               </div>
             </div>
             {% if errors.username %}
@@ -18,7 +18,7 @@
             <div class="field">
               <div class="control">
                 Password:
-                  <input class="input" type="password" placeholder="Password" name="password" value="{{password}}" />
+                  <input class="input" type="password" name="password" value="{{password}}" />
               </div>
             </div>
             {% if errors.password %}
@@ -27,7 +27,7 @@
             <div class="field">
               <div class="control">
                 Name:
-                  <input class="input" type="text" placeholder="Name" name="name" value="{{name}}"/>
+                  <input class="input" type="text" name="name" value="{{name}}"/>
               </div>
             </div>
             {% if errors.name %}
@@ -36,7 +36,7 @@
             <div class="field">
               <div class="control">
                 Location:
-                  <input class="input" type="text" placeholder= "Location" name="location" value="{{location}}" />
+                  <input class="input" type="text" name="location" value="{{location}}" />
               </div>
             </div>
             {% if errors.location %}
@@ -44,8 +44,17 @@
             {% endif %}
             <div class="field">
               <div class="control">
+                Instruments:
+                  <input class="input" type="text" placeholder="Separated by a comma" name="instruments" value="{{instruments}}"/>
+              </div>
+            </div>
+            {% if errors.instruments %}
+              <div class="notification is-danger">{{errors.instruments|join}}</div>
+            {% endif %}
+            <div class="field">
+              <div class="control">
                 Biography:
-                  <textarea class="textarea" placeholder="Biography" name="bio">{{bio}}</textarea>
+                  <textarea class="textarea" name="bio">{{bio}}</textarea>
               </div>
             </div>
             {% if errors.bio %}

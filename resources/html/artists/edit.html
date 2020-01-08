@@ -20,6 +20,13 @@
         <div class="notification is-danger">{{errors.location|join}}</div>
         {% endif %}
         <p>
+          Instruments:
+          <input class="input" type="text" name="instruments" value="{{artist.instruments}}" />
+        </p>
+        {% if errors.instruments %}
+        <div class="notification is-danger">{{errors.instruments|join}}</div>
+        {% endif %}
+        <p>
           Biography:
           <textarea class="textarea" name="bio">{{artist.bio}}</textarea>
         </p>

@@ -30,7 +30,9 @@
           <i class="material-icons">music_note</i>
         </span>
         <h4 class="title is-spaced is-5">Genres</h4>
-        <p class="subtitle is-6">Rock 'n roll</p>
+        <ul class="comma-list">
+          {{band.genres}}
+        </ul>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
@@ -44,7 +46,7 @@
           <i class="material-icons">account_circle</i>
         </span>
         <h4 class="title is-spaced is-5">Member since</h4>
-        <p class="subtitle is-6">{{band.created_at}}</p>
+        <p class="subtitle is-6">{{band.created_at|date:shortDate}}</p>
       </div> 
     </div>
   </div>
@@ -77,13 +79,12 @@
                 {% ifequal item.artist_id band.owner_id %}
                   <i class="material-icons" style="color: #fdd835">star</i>
                 {% endifequal %}
-                {{item.name}}
+                <a href="/artists/show/{{item.id}}">{{item.name}}</a>
               </h5>
               <p class="subtitle is-6"></p>
-                <ul>
-                <li>Drummer</li>
-                <li>Singer</li>
-              </ul>
+                <ul class="comma-list">
+                  {{item.instruments}}
+                </ul>
               {% ifequal identity.id band.owner_id %}
                 <form class="field" method="POST" action="/bands/delete-membership/{{band.id}}">
                   <input style="display: none" type="text" name="artist_id" value="{{item.id}}" />
