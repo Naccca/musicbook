@@ -59,11 +59,19 @@
    "artists/index.html"
    {:artists (db/get-artists) :info (:info flash)}))
 
+(defn search-page [{:keys [params flash] :as request}]
+  (layout/render
+    request
+    "artists/index.html"
+    {:artists (db/search-artists {:name-like (str "%" (:q params) "%")}) :info (:info flash)}))
+
 (defn show-page [{:keys [path-params] :as request}]
   (layout/render
    request
    "artists/show.html"
-   {:artist (db/get-artist path-params)}))
+   {:artist (db/get-artist path-params)
+    :bands (db/get-bands-by-artist-id (assoc path-params :state_id 2))
+    :invites (db/get-bands-by-artist-id (assoc path-params :state_id 1))}))
 
 (defn new-page [{:keys [flash] :as request}]
   (layout/render
@@ -121,6 +129,7 @@
 
 (defn artists-routes []
   [["/artists" {:get index-page :post create-artist!}]
+   ["/artists/search" {:get search-page}]
    ["/artists/show/:id" {:get show-page}]
    ["/artists/new" {:get new-page}]
    ["/artists/edit/:id" {:get edit-page}]

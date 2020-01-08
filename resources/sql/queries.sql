@@ -26,6 +26,11 @@ WHERE id = :id
 -- :doc selects all artists
 SELECT * FROM artists
 
+-- :name search-artists :? :*
+-- :doc search artists by name
+SELECT * FROM artists
+WHERE name LIKE :name-like
+
 -- :name get-artist :? :1
 -- doc retrieves an artist record given the id
 SELECT * FROM artists
@@ -69,6 +74,11 @@ WHERE id = :id
 -- :doc selects all bands
 SELECT * FROM bands
 
+-- :name search-bands :? :*
+-- :doc search bands by name
+SELECT * FROM bands
+WHERE name LIKE :name-like
+
 -- :name get-band :? :1
 --doc retrieves an band record given the id
 SELECT * FROM bands
@@ -96,7 +106,12 @@ WHERE id = :id
 -- :name get-artists-by-band-id :? :*
 -- :doc selects all artists that are members of the band
 SELECT * FROM artists, memberships
-WHERE artists.id = memberships.artist_id AND memberships.band_id = :id
+WHERE artists.id = memberships.artist_id AND memberships.band_id = :id AND state_id = :state_id
+
+-- :name get-bands-by-artist-id :? :*
+-- :doc selects all bands for artist
+SELECT * FROM bands, memberships
+WHERE bands.id = memberships.band_id AND memberships.artist_id = :id AND state_id = :state_id
 
 -- :name membership? :? :1
 -- :doc returns true if membership exists

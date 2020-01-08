@@ -11,7 +11,7 @@
 
     {% style "/css/screen.css" %}
   </head>
-  <body>
+  <body style="background: url(/img/grey_background.jpg);">
       <!-- navbar -->
       <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
           <div class="container is-widescreen">
@@ -74,5 +74,23 @@
     
     {% block page-scripts %}
     {% endblock %}
+
+    <footer class="footer has-background-dark">
+      <div class="container">
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <a class="title is-4 has-text-light" href="/" style="font-weight:bold;">musicbook</a>
+            </div>
+            <p class="subtitle is-6 has-text-light">© 2019 Nadezda Nisic. All right reserved.</p>
+          </div>
+          <div class="level-right">
+            <a class="level-item has-text-light" href="/about">About</a>
+            <a class="level-item has-text-light" href="/artists">Artists</a>
+            <a class="level-item has-text-light" href="/bands">Bands</a>
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

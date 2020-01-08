@@ -40,6 +40,12 @@
    "bands/index.html"
    {:bands (db/get-bands) :info (:info flash)}))
 
+(defn search-page [{:keys [params flash] :as request}]
+  (layout/render
+    request
+    "bands/index.html"
+    {:bands (db/search-bands {:name-like (str "%" (:q params) "%")}) :info (:info flash)}))
+
 (defn show-page [{:keys [path-params flash] :as request}]
   (let [band (db/get-band path-params)]
     (layout/render
@@ -47,7 +53,8 @@
      "bands/show.html"
      {:band band
       :owner (db/get-artist {:id (:owner_id band)})
-      :artists (db/get-artists-by-band-id path-params)
+      :artists (db/get-artists-by-band-id (assoc path-params :state_id 2))
+      :invites (db/get-artists-by-band-id (assoc path-params :state_id 1))
       :info (:info flash)})))
 
 (defn new-page [{:keys [flash] :as request}]
@@ -112,6 +119,9 @@
         (assoc(response/found (str "/bands/show/" (:id band))) :flash {:info "Artist not found!"}))
       (response/found "/"))))
 
+(defn accept-membership! [{:keys [path-params params session]}]
+  (let [band (db/get-band path-params)]))
+
 (defn delete-membership! [{:keys [path-params params session]}]
   (let [band (db/get-band path-params)]
     (if (owner? band session)
@@ -127,6 +137,7 @@
 
 (defn bands-routes []
   [["/bands" {:get index-page :post create-band!}]
+   ["/bands/search" {:get search-page}]
    ["/bands/show/:id" {:get show-page}]
    ["/bands/new" {:get new-page}]
    ["/bands/edit/:id" {:get edit-page}]

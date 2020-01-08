@@ -1,35 +1,108 @@
 {% extends "base.html" %}
 {% block content %}
- <div class="container is-widescreen">
-    <div class="col s12 m6">
-      <div class="card">
-        <div class="card-image">
-          <img src="img/warning_clojure.png">
-          <span class="card-title">{{artist.name}}</span>
-          <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
-        </div>
-        <div class="card-content">
-          <p>Username: {{artist.username}}</p>
-          <p>Password Hash: {{artist.password_hash}}</p>
-          <p>Location: {{artist.location}}</p>
-          <p>Byography: {{artist.bio}}</p>
-          <p>Created at: {{artist.created_at}}</p>
-          <p>Updated at: {{artist.updated_at}}</p>
-          {% ifequal identity.id artist.id %}
-          <div class="field is-grouped">
-            <p class="control">
-              <a href="/artists/edit/{{artist.id}}" class="button is-info">Update</a>
-            </p>
-            <p class="control">
-              <form method="POST" action="/artists/delete/{{artist.id}}">
-                {% csrf-field %}
-                <input class="button is-danger" type="submit" value="Delete"/>
-              </form>
-            </p>
-          </div>
-          {% endifequal %}
-        </div>
+{{info}}
+<section class="section">
+  <div class="container has-text-centered">
+    <h2 class="title">{{artist.name}}</h2>
+    <nav class="level">
+      <div class="level-item has-text-centered">
       </div>
+      {% ifequal identity.id artist.id %}
+      <div class="level-right">
+        <p class="level-item"><a href="/artists/edit/{{artist.id}}" class="button is-info">Update</a></p>
+        <p class="level-item">
+          <form method="POST" action="/artists/delete/{{artist.id}}">
+            {% csrf-field %}
+            <input class="button is-danger" type="submit" value="Delete"/>
+          </form>
+        </p>
+      </div>
+      {% endifequal %}
+    </nav>
+        <div class="block"><img class="is-16by9" src="/img/the_beatles.jpg" alt=""></div>
+  </div>
+</section>
+<section class="section">
+  <div class="container has-text-centered">
+    <div class="columns is-multiline">
+      <div class="column is-6 is-4-desktop">
+        <span class="icon">
+          <i class="material-icons">music_note</i>
+        </span>
+        <h4 class="title is-spaced is-5">Genres</h4>
+        <p class="subtitle is-6">Rock 'n roll</p>
+      </div>
+      <div class="column is-6 is-4-desktop">
+        <span class="icon">
+          <i class="material-icons">public</i>
+        </span>
+        <h4 class="title is-spaced is-5">Location</h4>
+        <p class="subtitle is-6">{{artist.location}}</p>
+      </div>
+      <div class="column is-6 is-4-desktop">
+        <span class="icon">
+          <i class="material-icons">account_circle</i>
+        </span>
+        <h4 class="title is-spaced is-5">Member since</h4>
+        <p class="subtitle is-6">{{artist.created_at|date:shortDate}}</p>
+      </div> 
     </div>
   </div>
+</section>
+  <section class="section">
+  <div class="container has-text-centered">
+    <h4 class="title is-4">Biography</h4>
+    <div class="box">
+    <p>{{artist.bio}}</p>
+    </div>
+  </div>
+</section>
+</section>
+<section class="section">
+  <div class="container has-text-centered">
+    <h2 class="title">Bands</h2>
+    <p class="subtitle">Proud member of:</p>
+    <br>
+    <div class="columns is-centered is-multiline">
+      {% for item in bands %}
+          <div class="column is-3">
+              <div class="level">
+                <div class="level-item">
+                  <figure class="image is-128x128">
+                    <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
+                  </figure>
+                </div>
+              </div>
+              <h5 class="title is-5">
+                {% ifequal artist.id item.owner_id %}
+                  <i class="material-icons" style="color: #fdd835">star</i>
+                {% endifequal %}
+                {{item.name}}
+              </h5>
+              {% ifequal identity.id artist.id %}
+                <form class="field" method="POST" action="/bands/delete-membership/{{item.id}}">
+                  <input style="display: none" type="text" name="artist_id" value="{{artist.id}}" />
+                  <input type="submit" class="button is-danger" value="Leave"/>
+                </form>
+              {% endifequal %}
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% ifequal artist.id identity.id %}
+  <section class="section">
+    <div class="container has-text-centered">
+      <h2 class="title">Invites</h2>
+      <br>
+      {% for item in invites %}
+        <h5 class="title is-5">{{item.name}}</h5>
+        <form method="POST" action="/artists/accept-membership/{{identity.id}}">
+          <input style="display: none" type="text" name="band_id" value="{{item.id}}" />
+          <input type="submit" class="button is-primary" value="Accept"/>
+        </form>
+      {% endfor %}
+    </div>
+  </section>
+{% endifequal %}
 {% endblock %}

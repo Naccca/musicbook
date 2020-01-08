@@ -1,19 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-{{info}}
-<div class="content">
-  <div class="columns">
-    <div class="column">
-      <h3>Bands</h3>
-      <a href="/bands/new">Create new band</a>
-      <ul class="bands">
-        {% for item in bands %}
-        <li>
-          <p><a href="bands/show/{{item.id}}">{{item.name}}</a></p>
-        </li>
-        {% endfor %}
-      </ul>
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-3">
+        <form method="GET" action="/bands/search">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input is-rounded" name="q" type="text" placeholder="Search...">
+                <span class="icon is-left">
+                  <i class="material-icons">search</i>
+                </span>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="columns is-multiline">
+      {% for item in bands %}
+        <div class="column is-3">
+          <div class="card">
+            <div class="card-image">
+              <figure class="image is-4by3">
+                <a href="/bands/show/{{item.id}}">
+                  <img src="/img/the_beatles.jpg" alt="" />
+                </a>
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <p class="title is-4"><a href="/bands/show/{{item.id}}">{{item.name}}</a></p>
+                  <p class="subtitle is-6">{{item.location}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <time>Member since: {{item.created_at|date:shortDate}}</time>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
   </div>
-</div>
+</section>
 {% endblock %}
