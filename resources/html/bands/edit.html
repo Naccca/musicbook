@@ -1,41 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content">
-  <div class="columns">
-    <div class="column">
-      <form method="POST" action="/bands/update/{{band.id}}">
-        {% csrf-field %}
-        <p>
-          Name:
-          <input class="input" type="text" name="name" value="{{band.name}}" />
-        </p>
-        {% if errors.name %}
-        <div class="notification is-danger">{{errors.name|join}}</div>
-        {% endif %}
-        <p>
-          Location:
-          <input class="input" type="text" name="location" value="{{band.location}}" />
-        </p>
-        {% if errors.location %}
-        <div class="notification is-danger">{{errors.location|join}}</div>
-        {% endif %}
-        <p>
-        <p>
-          Genres:
-          <input class="input" type="text" name="genres" value="{{band.genres}}" />
-        </p>
-        {% if errors.genres %}
-        <div class="notification is-danger">{{errors.genres|join}}</div>
-        {% endif %}
-          Biography:
-          <textarea class="textarea" name="bio">{{band.bio}}</textarea>
-        </p>
-        {% if errors.bio %}
-        <div class="notification is-danger">{{errors.bio|join}}</div>
-        {% endif %}
-        <input type="submit" class="button is-primary" value="Update"/>
-      </form>
+<section class="section">
+  <div class="container has-text-centered">
+    <h3 class="title is-3">Update {{band.name}}</h3>
+  </div>
+  <div class="content">
+    <div class="columns">
+      <div class="column">
+        <form method="POST" action="/bands/update/{{band.id}}">
+          {% csrf-field %}
+          <p>
+            Name:
+            <input class="input" type="text" name="name" value="{{band.name}}" />
+          </p>
+          {% if errors.name %}
+          <div class="notification is-danger">{{errors.name|join}}</div>
+          {% endif %}
+          <p>
+            Location:
+            <input class="input" type="text" name="location" value="{{band.location}}" />
+          </p>
+          {% if errors.location %}
+          <div class="notification is-danger">{{errors.location|join}}</div>
+          {% endif %}
+          <p>
+          <p>
+            Genres:
+            <input class="input" type="text" name="genres" value="{{band.genres}}" />
+          </p>
+          {% if errors.genres %}
+          <div class="notification is-danger">{{errors.genres|join}}</div>
+          {% endif %}
+            Biography:
+            <textarea class="textarea" name="bio">{{band.bio}}</textarea>
+          </p>
+          {% if errors.bio %}
+          <div class="notification is-danger">{{errors.bio|join}}</div>
+          {% endif %}
+          <input type="submit" class="button is-info" value="Update"/>
+        </form>
+      </div>
     </div>
   </div>
-</div>
+</section>
 {% endblock %}

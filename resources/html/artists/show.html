@@ -8,18 +8,20 @@
       <div class="level-item has-text-centered">
       </div>
       {% ifequal identity.id artist.id %}
-      <div class="level-right">
-        <p class="level-item"><a href="/artists/edit/{{artist.id}}" class="button is-info">Update</a></p>
-        <p class="level-item">
-          <form method="POST" action="/artists/delete/{{artist.id}}">
-            {% csrf-field %}
-            <input class="button is-danger" type="submit" value="Delete"/>
-          </form>
-        </p>
-      </div>
+        <div class="level-right">
+          <p class="level-item"><a href="/artists/edit/{{artist.id}}" class="button is-info">Update</a></p>
+          <p class="level-item">
+            <form method="POST" action="/artists/delete/{{artist.id}}">
+              {% csrf-field %}
+              <input class="button is-danger" type="submit" value="Delete"/>
+            </form>
+          </p>
+        </div>
       {% endifequal %}
     </nav>
-        <div class="block"><img class="is-16by9" src="/img/the_beatles.jpg" alt=""></div>
+    <div class="block">
+      <img class="is-16by9" src="/img/the_beatles.jpg" alt="">
+    </div>
   </div>
 </section>
 <section class="section">
@@ -29,88 +31,100 @@
         <span class="icon">
           <i class="material-icons">music_note</i>
         </span>
-        <h4 class="title is-spaced is-5">Instruments</h4>
-        <ul class="comma-list">
-          {{artist.instruments}}
-        </ul>
+        <h4 class="title is-spaced is-4">Instruments</h4>
+        <div class="subtitle is-5">
+          <ul class="comma-list">
+            {{artist.instruments}}
+          </ul>
+        </div>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
           <i class="material-icons">public</i>
         </span>
-        <h4 class="title is-spaced is-5">Location</h4>
-        <p class="subtitle is-6">{{artist.location}}</p>
+        <h4 class="title is-spaced is-4">Location</h4>
+        <p class="subtitle is-5">{{artist.location}}</p>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
           <i class="material-icons">account_circle</i>
         </span>
-        <h4 class="title is-spaced is-5">Member since</h4>
-        <p class="subtitle is-6">{{artist.created_at|date:shortDate}}</p>
+        <h4 class="title is-spaced is-4">Member since</h4>
+        <p class="subtitle is-5">{{artist.created_at|date:shortDate}}</p>
       </div> 
     </div>
   </div>
 </section>
-  <section class="section">
+<section class="section">
   <div class="container has-text-centered">
-    <h4 class="title is-4">Biography</h4>
+    <h4 class="title is-4">About Me</h4>
     <div class="box">
     <p>{{artist.bio}}</p>
     </div>
   </div>
 </section>
-</section>
 <section class="section">
   <div class="container has-text-centered">
-    <h2 class="title">Bands</h2>
-    <p class="subtitle">Proud member of:</p>
+    <h4 class="title is-4">Bands</h4>
+    <p class="subtitle is-5">Proud member of:</p>
     <br>
     <div class="columns is-centered is-multiline">
       {% for item in bands %}
-          <div class="column is-3">
-              <div class="level">
-                <div class="level-item">
-                  <figure class="image is-128x128">
-                    <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
-                  </figure>
-                </div>
-              </div>
-              <h5 class="title is-5">
-                {% ifequal artist.id item.owner_id %}
-                  <i class="material-icons" style="color: #fdd835">star</i>
-                {% endifequal %}
-                <a href="/bands/show/{{item.id}}">{{item.name}}</a>
-              </h5>
-              <p class="subtitle is-6"></p>
-              <ul class="comma-list">
-                {{item.genres}}
-              </ul>
-              {% ifequal identity.id artist.id %}
-                <form class="field" method="POST" action="/bands/delete-membership/{{item.id}}">
-                  <input style="display: none" type="text" name="artist_id" value="{{artist.id}}" />
-                  <input type="submit" class="button is-danger" value="Leave"/>
-                </form>
-              {% endifequal %}
+        <div class="column is-3">
+          <div class="level">
+            <div class="level-item">
+              <figure class="image is-128x128">
+                <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
+              </figure>
+            </div>
           </div>
+          <h5 class="title is-5">
+          {% ifequal artist.id item.owner_id %}
+            <i class="material-icons" style="color: #fdd835">star</i>
+          {% endifequal %}
+          <a href="/bands/show/{{item.id}}">{{item.name}}</a>
+          </h5>
+          <div class="subtitle is-6">
+            <ul class="comma-list">
+              {{item.genres}}
+            </ul>
+          </div>
+          <br>
+          {% ifequal identity.id artist.id %}
+            <form class="field" method="POST" action="/bands/delete-membership/{{item.id}}">
+              <input style="display: none" type="text" name="artist_id" value="{{artist.id}}" />
+              <input type="submit" class="button is-danger" value="Leave"/>
+            </form>
+          {% endifequal %}
+        </div>
       {% endfor %}
     </div>
   </div>
 </section>
 {% ifequal artist.id identity.id %}
-  <section class="section">
-    <div class="container has-text-centered">
-      <h2 class="title">Invites</h2>
-      <br>
+<section class="section">
+  <div class="container has-text-centered">
+    <h2 class="title">Invites</h2>
+    <br>
+    <div class="columns is-centered is-multiline">
       {% for item in invites %}
-        <h5 class="title is-5">
-          <a href="/bands/show/{{item.id}}">{{item.name}}</a>
-        </h5>
-        <form method="POST" action="/artists/accept-membership/{{identity.id}}">
-          <input style="display: none" type="text" name="band_id" value="{{item.id}}" />
-          <input type="submit" class="button is-primary" value="Accept"/>
-        </form>
+        <div class="column">
+          <span class="icon">
+            <i class="material-icons">face</i>
+          </span>
+          <div class="level">
+            <div class="level-item">
+              <a href="/bands/show/{{item.id}}">{{item.name}}</a>
+            </div>
+          </div>
+          <form method="POST" action="/artists/accept-membership/{{identity.id}}">
+            <input style="display: none" type="text" name="band_id" value="{{item.id}}" />
+            <input type="submit" class="button is-success" value="Accept"/>
+          </form>
+        </div>
       {% endfor %}
     </div>
-  </section>
+  </div>
+</section>
 {% endifequal %}
 {% endblock %}

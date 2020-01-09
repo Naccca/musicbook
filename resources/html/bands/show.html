@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-{{info}}
 <section class="section">
   <div class="container has-text-centered">
     <h2 class="title">{{band.name}}</h2>
@@ -8,18 +7,20 @@
       <div class="level-item has-text-centered">
       </div>
       {% ifequal identity.id band.owner_id %}
-      <div class="level-right">
-        <p class="level-item"><a href="/bands/edit/{{band.id}}" class="button is-info">Update</a></p>
-        <p class="level-item">
-          <form method="POST" action="/bands/delete/{{band.id}}">
-            {% csrf-field %}
-            <input class="button is-danger" type="submit" value="Delete"/>
-          </form>
-        </p>
-      </div>
+        <div class="level-right">
+          <p class="level-item"><a href="/bands/edit/{{band.id}}" class="button is-info">Update</a></p>
+          <p class="level-item">
+            <form method="POST" action="/bands/delete/{{band.id}}">
+              {% csrf-field %}
+              <input class="button is-danger" type="submit" value="Delete"/>
+            </form>
+          </p>
+        </div>
       {% endifequal %}
     </nav>
-        <div class="block"><img class="is-16by9" src="/img/the_beatles.jpg" alt=""></div>
+    <div class="block">
+      <img class="is-16by9" src="/img/the_beatles.jpg" alt="">
+    </div>
   </div>
 </section>
 <section class="section">
@@ -29,69 +30,72 @@
         <span class="icon">
           <i class="material-icons">music_note</i>
         </span>
-        <h4 class="title is-spaced is-5">Genres</h4>
-        <ul class="comma-list">
-          {{band.genres}}
-        </ul>
+        <h4 class="title is-spaced is-4">Genres</h4>
+        <div class="subtitle is-5">
+          <ul class="comma-list">
+            {{band.genres}}
+          </ul>
+        </div>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
           <i class="material-icons">public</i>
         </span>
-        <h4 class="title is-spaced is-5">Location</h4>
-        <p class="subtitle is-6">{{band.location}}</p>
+        <h4 class="title is-spaced is-4">Location</h4>
+        <p class="subtitle is-5">{{band.location}}</p>
       </div>
       <div class="column is-6 is-4-desktop">
         <span class="icon">
           <i class="material-icons">account_circle</i>
         </span>
-        <h4 class="title is-spaced is-5">Member since</h4>
-        <p class="subtitle is-6">{{band.created_at|date:shortDate}}</p>
+        <h4 class="title is-spaced is-4">Member since</h4>
+        <p class="subtitle is-5">{{band.created_at|date:shortDate}}</p>
       </div> 
     </div>
   </div>
 </section>
-  <section class="section">
+<section class="section">
   <div class="container has-text-centered">
     <h4 class="title is-4">Biography</h4>
     <div class="box">
-    <p>{{band.bio}}</p>
+      <p>{{band.bio}}</p>
     </div>
   </div>
 </section>
-</section>
 <section class="section">
   <div class="container has-text-centered">
-    <h2 class="title">Members</h2>
-    <p class="subtitle">We are the guys that made this whole thing possible</p>
+    <h4 class="title is-4">Members</h4>
+    <p class="subtitle is-5">We are the guys that made this whole thing possible</p>
     <br>
     <div class="columns is-centered is-multiline">
       {% for item in artists %}
-          <div class="column is-3">
-              <div class="level">
-                <div class="level-item">
-                  <figure class="image is-128x128">
-                    <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
-                  </figure>
-                </div>
-              </div>
-              <h5 class="title is-5">
-                {% ifequal item.artist_id band.owner_id %}
-                  <i class="material-icons" style="color: #fdd835">star</i>
-                {% endifequal %}
-                <a href="/artists/show/{{item.id}}">{{item.name}}</a>
-              </h5>
-              <p class="subtitle is-6"></p>
-                <ul class="comma-list">
-                  {{item.instruments}}
-                </ul>
-              {% ifequal identity.id band.owner_id %}
-                <form class="field" method="POST" action="/bands/delete-membership/{{band.id}}">
-                  <input style="display: none" type="text" name="artist_id" value="{{item.id}}" />
-                  <input type="submit" class="button is-danger" value="Delete"/>
-                </form>
-              {% endifequal %}
+        <div class="column is-3">
+          <div class="level">
+            <div class="level-item">
+              <figure class="image is-128x128">
+                <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
+              </figure>
             </div>
+          </div>
+          <h5 class="title is-5">
+            {% ifequal item.artist_id band.owner_id %}
+              <i class="material-icons" style="color: #fdd835">star</i>
+            {% endifequal %}
+            <a href="/artists/show/{{item.id}}">{{item.name}}</a>
+          </h5>
+          <div class="subtitle is-6">
+            <ul class="comma-list">
+              {{item.instruments}}
+            </ul>
+          </div>
+          <br>
+          {% ifequal identity.id band.owner_id %}
+            <form class="field" method="POST" action="/bands/delete-membership/{{band.id}}">
+              <input style="display: none" type="text" name="artist_id" value="{{item.id}}" />
+              <input type="submit" class="button is-danger" value="Delete"/>
+            </form>
+          {% endifequal %}
+        </div>
       {% endfor %}
     </div>
   </div>
@@ -99,24 +103,31 @@
 {% ifequal band.owner_id identity.id %}
 <section class="section">
   <div class="container has-text-centered">
-    <h4 class="title">Invites</h4>
+    <h4 class="title is-4">Invites</h4>
       <br>
       <div class="columns is-centered is-multiline">
-      {% for item in invites %}
-      <div class="column">
-        <div class="level">
-          <div class="level-item">
-            <a class="link" href="/artists/show/{{item.id}}">{{item.name}}</a>
+        {% for item in invites %}
+          <div class="column">
+            <span class="icon">
+              <i class="material-icons">face</i>
+            </span>
+            <div class="level">
+              <div class="level-item">
+                <a class="link" href="/artists/show/{{item.id}}">{{item.name}}</a>
+              </div>
+            </div>
+            <form method="POST" action="/bands/delete-membership/{{band.id}}">
+              <input style="display: none" type="text" name="artist_id" value="{{item.id}}" />
+              <input type="submit" class="button is-danger" value="Delete"/>
+            </form>
           </div>
-        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
   </div>
 </section>
 {% endifequal %}
 {% ifequal identity.id band.owner_id %}
-  <section class="section">
+<section class="section">
   <div class="container has-text-centered">
     <div class="columns is-centered">
       <div class="column is-5 is-4-desktop">
@@ -125,8 +136,9 @@
             <div class="control">
               <input class="input" type="text" name="artist_name" placeholder="Artist"/>
             </div>
+            <br>
             <div class="field">
-              <input type="submit" class="button is-primary" value="Submit"/>
+              <input type="submit" class="button is-success" value="Submit"/>
             </div>
         </form>
       </div>
