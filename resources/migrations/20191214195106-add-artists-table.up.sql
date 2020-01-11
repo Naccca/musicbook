@@ -1,10 +1,11 @@
 CREATE TABLE artists
 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
- username VARCHAR(255) NOT NULL,
+ username VARCHAR(255) NOT NULL UNIQUE,
  password_hash VARCHAR(255) NOT NULL,
- name VARCHAR(255) NOT NULL,
+ name VARCHAR(255) NOT NULL UNIQUE,
  bio VARCHAR,
  location VARCHAR(255),
  instruments VARCHAR(255),
  created_at TIMESTAMP,
- updated_at TIMESTAMP);
+ updated_at TIMESTAMP,
+ has_image BOOLEAN DEFAULT FALSE);

@@ -5,7 +5,11 @@
    [clojure.java.io :as io]
    [ring.util.response]
    [ring.util.http-response :as response]
-   [struct.core :as st]))
+   [struct.core :as st]
+   [im4clj.core :as im]
+   [clojure.tools.logging :as log]
+   [buddy.hashers :as hashers])
+  (:import [java.io File FileInputStream FileOutputStream]))
 
 (def band-schema
   [[:name
@@ -21,6 +25,11 @@
     st/string]
 
    [:genres
+    st/required
+    st/string]])
+
+(def upload-schema
+  [[:filename
     st/required
     st/string]])
 
@@ -108,6 +117,45 @@
         (assoc(response/found "/bands") :flash {:info "band deleted!"}))
       (response/found "/"))))
 
+(defn file-path [path & [filename]]
+  (java.net.URLDecoder/decode
+    (io/as-relative-path (str path File/separator filename))
+    "utf-8"))
+
+(defn upload-file
+  [path {:keys [tempfile size]} id]
+  (try
+    (with-open [in (new FileInputStream tempfile)
+                out (new FileOutputStream (file-path path (str id ".jpg")))]
+      (let [source (.getChannel in)
+            dest   (.getChannel out)]
+        (.transferFrom dest source 0 (.size source))
+        (.flush out)))))
+
+(defn upload-image! [{:keys [params session]}]
+  (def id (:id params))
+  (if (st/valid? (:file params) upload-schema)
+    (do
+      (db/set-band-image! {:id id})
+      (upload-file "resources/public/img/bands/" (:file params) id)
+      (im/convert
+        (im/-define  1272 842)
+        (str "resources/public/img/bands/" id ".jpg")
+        (im/-thumbnail 636 421 "^")
+        (im/-gravity "center")
+        (im/-extent 636 421)
+        (str "resources/public/img/bands/" id "_big.jpg"))
+      (im/convert
+        (im/-define 256 256)
+        (str "resources/public/img/bands/" id ".jpg")
+        (im/-thumbnail 128 128 "^")
+        (im/-gravity "center")
+        (im/-extent 128 128)
+        (str "resources/public/img/bands/" id "_small.jpg"))
+      (io/delete-file (str "resources/public/img/bands/" id ".jpg"))
+      (response/found (str "/bands/show/" id)))
+    (response/found (str "/bands/show/" id))))
+
 (defn create-membership! [{:keys [path-params params session]}]
   (let [band (db/get-band path-params)]
     (if (owner? band session)
@@ -147,5 +195,6 @@
    ["/bands/edit/:id" {:get edit-page}]
    ["/bands/update/:id" {:post update-band!}]
    ["/bands/delete/:id" {:post delete-band!}]
+   ["/bands/upload" {:post upload-image!}]
    ["/bands/create-membership/:id" {:post create-membership!}]
    ["/bands/delete-membership/:id" {:post delete-membership!}]])

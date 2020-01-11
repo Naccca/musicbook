@@ -20,7 +20,34 @@
       {% endifequal %}
     </nav>
     <div class="block">
-      <img class="is-16by9" src="/img/the_beatles.jpg" alt="">
+      {% if artist.has_image %}
+        <img class="is-16by9" src="/img/artists/{{artist.id}}_big.jpg" alt="">
+      {% else %}
+        <img class="is-16by9" src="/img/artists/placeholder_big.jpg" alt="">
+      {% endif %}
+      {% ifequal identity.id artist.id %}
+        <div id="file-uploader" class="file has-name is-centered">
+          <form action="/artists/upload" method="POST" enctype="multipart/form-data">
+            <label class="file-label">
+              <input class="file-input" type="file" name="file" id="fileToUpload">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="material-icons">file_upload</i>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
+                <span class="file-name">
+                  No file uploaded
+                </span>
+                <span>
+                  <input class="button is-success" type="submit" value="Upload" name="submit">
+                </span>
+            </label>
+          </form>
+        </div>
+      {% endifequal %}
     </div>
   </div>
 </section>
@@ -74,7 +101,15 @@
           <div class="level">
             <div class="level-item">
               <figure class="image is-128x128">
-                <img class="is-rounded" src="/img/ringo_starr.jpg" alt="">
+                {% if item.has_image %}
+                  <a href="/bands/show/{{item.id}}">
+                    <img class="is-rounded" src="/img/bands/{{item.id}}_small.jpg" alt="">
+                  </a>
+                {% else %}
+                  <a href="/bands/show/{{item.id}}">
+                    <img class="is-rounded" src="/img/bands/placeholder_small.jpg" alt="">
+                  </a>
+                {% endif %}
               </figure>
             </div>
           </div>
@@ -126,5 +161,16 @@
     </div>
   </div>
 </section>
+<script type="text/javascript">
+  (function(){
+    const fileInput = document.querySelector('#file-uploader input[type=file]');
+    fileInput.onchange = () => {
+      if (fileInput.files.length > 0) {
+        const fileName = document.querySelector('#file-uploader .file-name');
+        fileName.textContent = fileInput.files[0].name;
+      }
+    }
+  })();
+</script>
 {% endifequal %}
 {% endblock %}

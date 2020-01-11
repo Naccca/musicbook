@@ -24,7 +24,11 @@
             <div class="card-image">
               <figure class="image is-4by3">
                 <a href="/bands/show/{{item.id}}">
-                  <img src="/img/the_beatles.jpg" alt="" />
+                  {% if item.has_image %}
+                    <img src="/img/bands/{{item.id}}_big.jpg" alt="" />
+                  {% else %}
+                    <img src="/img/bands/placeholder_big.jpg" alt="">
+                  {% endif %}
                 </a>
               </figure>
             </div>

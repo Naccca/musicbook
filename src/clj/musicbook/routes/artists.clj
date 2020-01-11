@@ -6,7 +6,9 @@
    [ring.util.response]
    [ring.util.http-response :as response]
    [struct.core :as st]
-   [buddy.hashers :as hashers]))
+   [im4clj.core :as im]
+   [buddy.hashers :as hashers])
+  (:import [java.io File FileInputStream FileOutputStream]))
 
 (def create-artist-schema
   [[:name
@@ -43,6 +45,11 @@
     st/string]
 
    [:location
+    st/required
+    st/string]])
+
+(def upload-schema
+  [[:filename
     st/required
     st/string]])
 
@@ -123,6 +130,45 @@
       (assoc(response/found "/artists") :flash {:info "Artist deleted!"}))
     (response/found "/")))
 
+(defn file-path [path & [filename]]
+  (java.net.URLDecoder/decode
+    (io/as-relative-path (str path File/separator filename))
+    "utf-8"))
+
+(defn upload-file
+  [path {:keys [tempfile size]} id]
+  (try
+    (with-open [in (new FileInputStream tempfile)
+                out (new FileOutputStream (file-path path (str id ".jpg")))]
+      (let [source (.getChannel in)
+            dest   (.getChannel out)]
+        (.transferFrom dest source 0 (.size source))
+        (.flush out)))))
+
+(defn upload-image! [{:keys [params session]}]
+  (def id (get-in session [:identity :id]))
+  (if (st/valid? (:file params) upload-schema)
+    (do
+      (db/set-artist-image! {:id id})
+      (upload-file "resources/public/img/artists/" (:file params) id)
+      (im/convert
+        (im/-define  1272 842)
+        (str "resources/public/img/artists/" id ".jpg")
+        (im/-thumbnail 636 421 "^")
+        (im/-gravity "center")
+        (im/-extent 636 421)
+        (str "resources/public/img/artists/" id "_big.jpg"))
+      (im/convert
+        (im/-define 256 256)
+        (str "resources/public/img/artists/" id ".jpg")
+        (im/-thumbnail 128 128 "^")
+        (im/-gravity "center")
+        (im/-extent 128 128)
+        (str "resources/public/img/artists/" id "_small.jpg"))
+      (io/delete-file (str "resources/public/img/artists/" id ".jpg"))
+      (response/found (str "/artists/show/" id)))
+    (response/found (str "/artists/show/" id))))
+
 (defn accept-membership! [{:keys [path-params params session]}]
   (let [artist (db/get-artist path-params)]
     (if (authorize? session path-params)
@@ -139,4 +185,5 @@
    ["/artists/edit/:id" {:get edit-page}]
    ["/artists/update/:id" {:post update-artist!}]
    ["/artists/delete/:id" {:post delete-artist!}]
+   ["/artists/upload" {:post upload-image!}]
    ["/artists/accept-membership/:id" {:post accept-membership!}]])

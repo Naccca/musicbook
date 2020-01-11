@@ -39,6 +39,12 @@ UPDATE artists
 SET name = :name, bio = :bio, location = :location, instruments = :instruments, updated_at = :updated_at
 WHERE id = :id
 
+-- :name set-artist-image! :! :n
+-- :doc sets has_image to true
+UPDATE artists
+SET has_image = true
+WHERE id = :id
+
 -- :name delete-artist! :! :n
 -- :doc deletes an artist record given the id
 DELETE FROM artists
@@ -70,6 +76,12 @@ VALUES (:name, :bio, :location, :genres, :owner_id, :created_at, :updated_at)
 -- :doc updates an existing band record
 UPDATE bands
 SET name = :name, bio = :bio, location = :location, genres = :genres, updated_at = :updated_at
+WHERE id = :id
+
+-- :name set-band-image! :! :n
+-- :doc sets has_image to true
+UPDATE bands
+SET has_image = true
 WHERE id = :id
 
 -- :name delete-band! :! :n
