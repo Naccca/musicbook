@@ -7,6 +7,7 @@
    [ring.util.http-response :as response]
    [struct.core :as st]
    [im4clj.core :as im]
+   [clojure.tools.logging :as log]
    [buddy.hashers :as hashers])
   (:import [java.io File FileInputStream FileOutputStream]))
 
@@ -103,31 +104,46 @@
   (if-let [errors (validate-artist params create-artist-schema)]
     (-> (response/found "/artists/new")
         (assoc :flash (assoc params :errors errors)))
-    (do
-      (db/create-artist!
-       (assoc
-        (dissoc params :password)
-        :password_hash (hashers/encrypt (:password params))
-        :created_at (java.util.Date.)
-        :updated_at (java.util.Date.)))
-      (response/found "/artists"))))
+    (if (not (db/artist-exists? {:username (:username params) :name (:name params)}))
+      (do
+        (db/create-artist!
+         (assoc
+          (dissoc params :password)
+          :password_hash (hashers/encrypt (:password params))
+          :created_at (java.util.Date.)
+          :updated_at (java.util.Date.)))
+        (response/found "/artists"))
+      (-> (response/found "/artists/new")
+        (assoc :flash (assoc
+                          params 
+                          :errors
+                          {:username "username or name not unique" :name "username or name not unique"}))))))
 
 (defn update-artist! [{:keys [path-params params session]}]
   (if (authorize? session path-params)
     (if-let [errors (validate-artist params update-artist-schema)]
       (-> (response/found (str "/artists/edit/" (:id path-params)))
           (assoc :flash (assoc params :errors errors)))
-      (do
-        (db/update-artist!
-         (assoc (merge params path-params) :updated_at (java.util.Date.)))
-        (response/found (str "/artists/show/" (:id path-params)))))
+      (if (or 
+            (not (db/artist-exists? {:username "" :name (:name params)}))
+            (= (:name (db/get-artist {:id (:id path-params)})) (:name params)))
+        (do
+          (db/update-artist!
+           (assoc (merge params path-params) :updated_at (java.util.Date.)))
+          (response/found (str "/artists/show/" (:id path-params))))
+        (-> (response/found (str "/artists/edit/" (:id path-params)))
+          (assoc :flash (assoc
+                            params 
+                            :errors
+                            {:name "name not unique"})))))
     (response/found "/")))
 
 (defn delete-artist! [{:keys [path-params session]}]
   (if (authorize? session path-params)
     (do
       (db/delete-artist! path-params)
-      (assoc(response/found "/artists") :flash {:info "Artist deleted!"}))
+      (-> (response/found "/artists")
+        (assoc  :flash {:info "Artist deleted!"} :session (dissoc session :identity))))
     (response/found "/")))
 
 (defn file-path [path & [filename]]

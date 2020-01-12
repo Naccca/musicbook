@@ -1,6 +1,7 @@
 -- :name get-artists :? :*
 -- :doc selects all artists
 SELECT * FROM artists
+ORDER BY name
 
 -- :name search-artists :? :*
 -- :doc search artists by name
@@ -26,6 +27,11 @@ WHERE name = :name
 -- :doc returns true if artist exists
 SELECT true FROM artists
 WHERE id = :id
+
+-- :name artist-exists? :? :1
+-- :doc check if artist exists
+SELECT true FROM artists
+WHERE username = :username OR name = :name 
 
 -- :name create-artist! :! :n
 -- :doc creates a new artist record
@@ -55,6 +61,7 @@ WHERE id = :id
 -- :name get-bands :? :*
 -- :doc selects all bands
 SELECT * FROM bands
+ORDER BY name
 
 -- :name search-bands :? :*
 -- :doc search bands by name
