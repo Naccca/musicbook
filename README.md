@@ -25,7 +25,7 @@ To start a web server for the application, run:
 lein run
 ```
 
-##Functionality Description
+## Functionality Description
 
 The application contains variety of pages: home page, search artists page, search bands page, artist profile, band profile and all the forms to support full CRUD functionality.
 
